@@ -1,0 +1,31 @@
+services:
+  mariadb-node-1:
+    image: mariadb:11.4
+    container_name: mariadb_node_1
+    restart: always
+    # The --wsrep-new-cluster flag is ONLY used on the very first start of the cluster
+    command: [
+      "mariadbd",
+      "--wsrep-on=ON",
+      "--wsrep-provider=/usr/lib/galera/libgalera_smm.so",
+      "--wsrep-cluster-name=my_galera_cluster",
+      "--wsrep-cluster-address=gcomm://", 
+      "--wsrep-node-name=node1",
+      "--wsrep-node-address=192.168.1.10", # IP of Host 1
+      "--wsrep-new-cluster" 
+    ]
+    ports:
+      - "3306:3306"
+      - "4567:4567"
+      - "4567:4567/udp"
+      - "4568:4568"
+      - "4444:4444"
+    environment:
+      MARIADB_ROOT_PASSWORD: "SuperSecureRootPassword"
+      MARIADB_DATABASE: "production_db"
+    volumes:
+      - mariadb_data_1:/var/lib/mysql
+
+volumes:
+  mariadb_data_1:
+

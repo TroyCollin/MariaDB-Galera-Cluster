@@ -1,0 +1,28 @@
+services:
+  mariadb-node-2:
+    image: mariadb:11.4
+    container_name: mariadb_node_2
+    restart: always
+    command: [
+      "mariadbd",
+      "--wsrep-on=ON",
+      "--wsrep-provider=/usr/lib/galera/libgalera_smm.so",
+      "--wsrep-cluster-name=my_galera_cluster",
+      "--wsrep-cluster-address=gcomm://192.168.1.10:4567", # Points to Host 1
+      "--wsrep-node-name=node2",
+      "--wsrep-node-address=192.168.1.11" # IP of Host 2
+    ]
+    ports:
+      - "3306:3306"
+      - "4567:4567"
+      - "4567:4567/udp"
+      - "4568:4568"
+      - "4444:4444"
+    environment:
+      MARIADB_ROOT_PASSWORD: "SuperSecureRootPassword" # Must match Node 1
+    volumes:
+      - mariadb_data_2:/var/lib/mysql
+
+volumes:
+  mariadb_data_2:
+
